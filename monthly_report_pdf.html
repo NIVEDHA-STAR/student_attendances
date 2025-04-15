@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Monthly Attendance Report</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 40px;
+            background-color: #fff;
+            color: #333;
+        }
+        h2 {
+            text-align: center;
+            font-size: 26px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .sub-header {
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 25px;
+            color: #555;
+        }
+        .info {
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #444;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+        th {
+            background-color: #34495e;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background-color: #f4f6f7;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: right;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Monthly Attendance Report</h2>
+    <div class="sub-header">Student-wise Attendance Summary</div>
+
+    <div class="info"><strong>Department:</strong> {{ department }}</div>
+    <div class="info"><strong>Year:</strong> {{ year }}</div>
+    <div class="info"><strong>Month:</strong> {{ month }}</div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>S.No</th>
+                <th>Register Number</th>
+                <th>Name</th>
+                <th>Attendance %</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ row.register_number }}</td>
+                <td>{{ row.name }}</td>
+                <td>{{ "%.2f"|format(row.attendance_percent) }}%</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    
+</body>
+</html>

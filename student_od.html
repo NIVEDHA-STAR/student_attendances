@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Submit On Duty</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #43cea2, #185a9d);
+            color: #fff;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+        }
+        form {
+            background: rgba(255,255,255,0.1);
+            padding: 25px;
+            border-radius: 12px;
+            width: 320px;
+        }
+        input, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: none;
+        }
+        input, textarea {
+            background: #fff;
+            color: #000;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h2>Submit OD Request</h2>
+    {% if message %}<p style="color:lightgreen;">{{ message }}</p>{% endif %}
+    <form method="POST" action="/submit_od" enctype="multipart/form-data">
+        <input type="text" name="event_name" placeholder="Event Name" required><br>
+        <input type="text" name="place" placeholder="Event Place" required><br>
+        <input type="date" name="od_date" required><br>
+        <textarea name="reason" placeholder="Reason for OD" required></textarea><br>
+        <input type="file" name="certificate" accept="application/pdf, image/*"><br> <!-- File upload for certificate -->
+        <button type="submit">Submit Request</button>
+    </form>
+</body>
+</html>
