@@ -253,7 +253,6 @@ def submit_od():
     except Exception as e:
         flash(f"❌ Failed to submit OD request: {str(e)}", "danger")
         return redirect(url_for('student_attendance'))
-
 @app.route('/approve_od', methods=['POST'])
 def approve_od():
     try:
@@ -264,43 +263,48 @@ def approve_od():
             flash("❌ OD request not found.", "danger")
             return redirect(url_for('professor_dashboard'))
 
-        # Parse date to datetime
-        od_date = od_data['od_date']
+        # Parse date to datetime object
+        od_date = od_data.get('od_date')
         if isinstance(od_date, str):
             od_date = datetime.strptime(od_date, "%Y-%m-%d")
+        elif not isinstance(od_date, datetime):
+            od_date = datetime.utcnow()
 
-        # Format OD as attendance
+        # Normalize timestamp to start of the day
+        od_date = od_date.replace(hour=0, minute=0, second=0, microsecond=0)
+
+        # Prepare attendance record for approved OD
         attendance_record = {
-            "name": od_data['name'],
-            "reg_no": od_data['reg_no'],
-            "year": od_data['year'],
-            "department": od_data['department'],
-            "subject_code": "OD",  # Important for report display
-            "timestamp": od_date.replace(hour=0, minute=0, second=0),  # Standardize timestamp
-            "event_name": od_data['event_name'],
-            "place": od_data['place'],
-            "certificate_filename": od_data.get('certificate_filename'),
+            "name": od_data.get('name'),
+            "reg_no": od_data.get('reg_no'),
+            "year": od_data.get('year'),
+            "department": od_data.get('department'),
+            "subject_code": "OD",  # Mark as OD attendance
+            "timestamp": od_date,
+            "event_name": od_data.get('event_name', ''),
+            "place": od_data.get('place', ''),
+            "certificate_filename": od_data.get('certificate_filename', None),
             "od": True,
             "status": "OD Present",
             "marked_by": "OD Approval",
             "marked_at": datetime.utcnow()
         }
 
-        # Insert into attendance
+        # Insert into attendance collection
         mongo.db.attendance.insert_one(attendance_record)
 
-        # Mark OD as approved
+        # Update the OD request status to 'approved'
         mongo.db.od_requests.update_one(
             {"_id": ObjectId(od_id)},
             {"$set": {"status": "approved", "approval_date": datetime.utcnow()}}
         )
 
         flash("✅ OD request approved and reflected in Attendance Report.", "success")
+
     except Exception as e:
         flash(f"❌ Error approving OD request: {str(e)}", "danger")
 
     return redirect(url_for('professor_dashboard'))
-
 # Update the route to reject the OD request
 @app.route('/reject_od', methods=['POST'])
 def reject_od():
@@ -318,7 +322,20 @@ def reject_od():
             {"$set": {"status": "rejected", "rejection_date": datetime.utcnow()}}
         )
 
-        flash("🚫 OD request has been rejected.", "info")
+        # Insert the rejected OD attendance into the normal attendance collection
+        attendance_record = {
+            "student_name": od_data["student_name"],
+            "register_number": od_data.get("register_number"),
+            "date": od_data["date"],
+            "event_name": od_data.get("event_name", ""),
+            "type": "od_rejected",
+            "submitted_on": datetime.utcnow()
+            # Add any other fields you want to store
+        }
+        mongo.db.attendance.insert_one(attendance_record)
+
+        flash("🚫 OD request has been rejected and recorded in attendance.", "info")
+
     except Exception as e:
         flash(f"❌ Error rejecting OD request: {str(e)}", "danger")
 
