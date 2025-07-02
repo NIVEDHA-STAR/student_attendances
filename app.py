@@ -14,7 +14,9 @@ from flask_mail import Mail, Message
 from flask import send_from_directory, current_app
 
 
+
 app = Flask(__name__)
+
 app.secret_key = 'your_secret_key'
 
 # MongoDB Atlas connection
