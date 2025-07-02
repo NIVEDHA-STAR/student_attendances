@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
 
-# Step 1: Make a bin folder to hold the wkhtmltopdf binary
+# Create bin directory to hold wkhtmltopdf
 mkdir -p bin
 
-# Step 2: Download wkhtmltopdf Linux binary
-curl -L -o bin/wkhtmltopdf https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltopdf_0.12.6-1.bionic_amd64
+# Download precompiled wkhtmltopdf binary (static version)
+curl -L -o bin/wkhtmltopdf.tar.xz https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.6-1/wkhtmltox-0.12.6-1-linux-generic-amd64.tar.xz
 
-# Step 3: Make it executable
+# Extract just the wkhtmltopdf executable
+tar -xf bin/wkhtmltopdf.tar.xz --strip-components=2 -C bin wkhtmltox/bin/wkhtmltopdf
+
+# Make it executable
 chmod +x bin/wkhtmltopdf
+
+# Optional: clean up archive
+rm bin/wkhtmltopdf.tar.xz
