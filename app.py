@@ -31,8 +31,9 @@ app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads', 'certificates
 pdf_path = (
     r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
     if platform.system() == "Windows"
-    else '/usr/local/bin/wkhtmltopdf'
+    else os.path.join(os.getcwd(), 'bin', 'wkhtmltopdf')
 )
+
 config = pdfkit.configuration(wkhtmltopdf=pdf_path)
 
 # Flask-Mail configuration
