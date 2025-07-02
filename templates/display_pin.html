@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generated PIN</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #e6f2ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .pin-box {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .pin-box h2 {
+            margin-bottom: 10px;
+        }
+
+        .pin {
+            font-size: 32px;
+            font-weight: bold;
+            color: #007BFF;
+        }
+
+        .countdown {
+            margin-top: 15px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
+
+        a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="pin-box">
+        <h2>Today's Attendance PIN</h2>
+        <div class="pin">{{ pin }}</div>
+        <div class="countdown">
+            ⏳ PIN valid for <span id="timer">{{ remaining_seconds }}</span> seconds
+        </div>
+        <a href="/professor_dashboard">Back to Dashboard</a>
+    </div>
+
+    <script>
+        let timeLeft = parseInt(document.getElementById("timer").textContent);
+        const timerDisplay = document.getElementById("timer");
+
+        const countdown = setInterval(() => {
+            timeLeft--;
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                timerDisplay.textContent = "Expired";
+                timerDisplay.style.color = "#e74c3c";
+            } else {
+                timerDisplay.textContent = timeLeft;
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

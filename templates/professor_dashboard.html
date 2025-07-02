@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Professor Dashboard</title>
+  <style>
+    /* RESET & BASE */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+    }
+
+    /* 🔥 BACKGROUND GRADIENT ANIMATION */
+    body {
+      background: linear-gradient(-45deg, #1f1c2c, #928dab, #1f4037, #99f2c8);
+      background-size: 400% 400%;
+      animation: gradientMove 15s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* 🌟 DASHBOARD CONTAINER */
+    .card {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-radius: 20px;
+      padding: 40px;
+      width: 90%;
+      max-width: 480px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      animation: fadeInUp 1.2s ease-out;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      color: #fff;
+      margin-bottom: 30px;
+      font-size: 28px;
+      text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #fff; }
+      to { text-shadow: 0 0 25px #00ffe0; }
+    }
+
+    /* 🧊 BUTTON STYLES */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      margin: 12px 0;
+      font-size: 16px;
+      font-weight: bold;
+      color: #fff;
+      text-decoration: none;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(120deg, #00c6ff, #0072ff);
+      box-shadow: 0 4px 20px rgba(0, 255, 255, 0.2);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 25px rgba(0, 255, 255, 0.4);
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(120deg, rgba(255,255,255,0.3), transparent, rgba(255,255,255,0.3));
+      animation: shimmer 2.5s linear infinite;
+      z-index: 1;
+    }
+
+    .btn span {
+      position: relative;
+      z-index: 2;
+    }
+
+    @keyframes shimmer {
+      0% { left: -100%; }
+      50% { left: 100%; }
+      100% { left: 100%; }
+    }
+
+    /* 🎨 INDIVIDUAL BUTTON COLORS */
+    .pin-btn { background: linear-gradient(145deg, #00f5c6, #0077ff); }
+    .report-btn { background: linear-gradient(145deg, #6dd5ed, #2196F3); }
+    .pdf-btn { background: linear-gradient(145deg, #f7971e, #ffd200); }
+    .logout-btn { background: linear-gradient(145deg, #ff4e50, #f9d423); }
+
+    /* 🌐 FLOATING MONTHLY REPORT CIRCLE BUTTON */
+    .monthly-report-button {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: white;
+      font-size: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      z-index: 999;
+    }
+
+    .monthly-report-button:hover {
+      transform: scale(1.1);
+      background: linear-gradient(135deg, #0072ff, #00c6ff);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    /* OD REQUESTS SECTION */
+    .od-requests {
+      margin-top: 20px;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.12);
+      padding: 20px;
+      border-radius: 10px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .od-request {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .od-request .btn {
+      display: inline-block;
+      width: auto;
+      padding: 8px 16px;
+      margin: 5px;
+      font-size: 14px;
+      background: linear-gradient(120deg, #6dd5ed, #2196F3);
+    }
+
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Welcome, Professor!</h1>
+    <a href="/generate_pin" class="btn pin-btn"><span>📌 Generate Attendance PIN</span></a>
+    <a href="/attendance_report" class="btn report-btn"><span>📄 View Attendance Report</span></a>
+    <a href="/download_pdf" class="btn pdf-btn"><span>📥 Download PDF</span></a>
+    <a href="/logout" class="btn logout-btn"><span>🚪 Logout</span></a>
+
+    <!-- OD Requests Section -->
+    <div class="od-requests">
+      <h2>Pending On Duty (OD) Requests</h2>
+      {% if od_requests %}
+        <ul>
+          {% for od in od_requests %}
+            <li class="od-request">
+              <p><strong>{{ od.name }}</strong> - Event: {{ od.event_name }} (Date: {{ od.od_date }})</p>
+              <p>Place: {{ od.place }}</p>
+              <form action="{{ url_for('approve_od_request', od_id=od['_id']) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn">Approve</button>
+              </form>
+              <form action="{{ url_for('reject_od_request', od_id=od['_id']) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn">Reject</button>
+              </form>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No pending OD requests.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- 🌙 Floating Monthly Report Circle Button -->
+  <a href="/monthly_report" class="monthly-report-button" title="Monthly Report 📅">📅</a>
+
+</body>
+</html>

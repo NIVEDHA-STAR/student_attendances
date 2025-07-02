@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Monthly Attendance Report</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #1e3c72, #2a5298);
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+            padding: 30px;
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        form {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        select, input[type="month"], button {
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+        }
+
+        select, input[type="month"] {
+            background-color: #f8f9fa;
+            color: #333;
+            font-weight: 500;
+        }
+
+        button {
+            background-color: #ffcc00;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #e6b800;
+        }
+
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            background-color: white;
+            color: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        th, td {
+            padding: 14px 20px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #003366;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover td {
+            background-color: #f5f5f5;
+        }
+
+        @media (max-width: 768px) {
+            form {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            table {
+                width: 100%;
+                font-size: 14px;
+            }
+
+            select, input[type="month"], button {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1><i class="fas fa-calendar-alt"></i> Monthly Attendance Report</h1>
+
+    <form method="POST">
+        <select name="department" required>
+            <option value="" disabled {% if not department %}selected{% endif %}>Select Department</option>
+            <option value="CSE" {% if department == 'CSE' %}selected{% endif %}>CSE</option>
+            <option value="ECE" {% if department == 'ECE' %}selected{% endif %}>ECE</option>
+            <option value="IT" {% if department == 'IT' %}selected{% endif %}>IT</option>
+            <option value="EEE" {% if department == 'EEE' %}selected{% endif %}>EEE</option>
+            <option value="CS" {% if department == 'CS' %}selected{% endif %}>CS</option>
+            <option value="MECH" {% if department == 'MECH' %}selected{% endif %}>MECH</option>
+            <option value="MCT" {% if department == 'MCT' %}selected{% endif %}>MCT</option>
+            <option value="AIDS" {% if department == 'AIDS' %}selected{% endif %}>AIDS</option>
+            <option value="AI/ML" {% if department == 'AI/ML' %}selected{% endif %}>AI/ML</option>
+            <option value="MBA" {% if department == 'MBA' %}selected{% endif %}>MBA</option>
+        </select>
+
+        <select name="year" required>
+            <option value="" disabled {% if not year %}selected{% endif %}>Select Year</option>
+            <option value="1st" {% if year == '1st' %}selected{% endif %}>1st Year</option>
+            <option value="2nd" {% if year == '2nd' %}selected{% endif %}>2nd Year</option>
+            <option value="3rd" {% if year == '3rd' %}selected{% endif %}>3rd Year</option>
+            <option value="4th" {% if year == '4th' %}selected{% endif %}>4th Year</option>
+        </select>
+
+        <input type="month" name="month" required value="{{ month if month else '' }}">
+
+        <button type="submit" name="action" value="view">
+            <i class="fas fa-eye"></i> View
+        </button>
+
+        {% if data %}
+        <button type="submit" name="download" value="pdf">
+            <i class="fas fa-file-download"></i> Download PDF
+        </button>
+        {% endif %}
+    </form>
+
+    {% if data %}
+        <h2>{{ department }} - {{ year }} Year</h2>
+        <h3>{{ month|replace("-", "/") }}</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Register Number</th>
+                    <th>Attendance %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in data %}
+                <tr>
+                    <td>{{ record.reg_no }}</td>
+                    <td>{{ "%.2f"|format(record.attendance_percent) }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</body>
+</html>

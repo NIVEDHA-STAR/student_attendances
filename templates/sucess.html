@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance Success</title>
+    <style>
+        body {
+            background-color: #f2f8ff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+
+        .container {
+            background: #e3f6e8;
+            border: 2px solid #a4d4ae;
+            display: inline-block;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 2px 2px 12px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #2c662d;
+            font-size: 28px;
+        }
+
+        .emoji {
+            font-size: 48px;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+
+        a:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="emoji">✅</div>
+        <h2>{{ message }}</h2>
+        <a href="{{ url_for('home') }}">Back to Home</a>
+    </div>
+</body>
+</html>

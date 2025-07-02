@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance System</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            background: linear-gradient(270deg, #00c9ff, #92fe9d, #fcb045);
+            background-size: 600% 600%;
+            animation: gradientShift 15s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating Glow Particles */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particles span {
+            position: absolute;
+            display: block;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+            animation: floaty 10s linear infinite;
+            border-radius: 50%;
+        }
+
+        .particles span:nth-child(1) { top: 10%; left: 20%; animation-duration: 18s; }
+        .particles span:nth-child(2) { top: 70%; left: 80%; animation-duration: 20s; }
+        .particles span:nth-child(3) { top: 50%; left: 40%; animation-duration: 16s; }
+        .particles span:nth-child(4) { top: 30%; left: 75%; animation-duration: 22s; }
+        .particles span:nth-child(5) { top: 80%; left: 10%; animation-duration: 19s; }
+
+        @keyframes floaty {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-1000px) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        /* Animation keyframes */
+        @keyframes fadeSlide {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: fadeSlide 0.7s ease-out forwards;
+        }
+
+        .fade-in:nth-child(1) { animation-delay: 0.3s; }
+        .fade-in:nth-child(2) { animation-delay: 0.5s; }
+        .fade-in:nth-child(3) { animation-delay: 0.7s; }
+        .fade-in:nth-child(4) { animation-delay: 0.9s; }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 50px 40px;
+            border-radius: 25px;
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            width: 90%;
+            max-width: 420px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        h1 {
+            color: #fff;
+            margin-bottom: 35px;
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+        }
+
+        a.button {
+            display: block;
+            margin: 15px 0;
+            padding: 14px;
+            background: linear-gradient(135deg, #8e44ad, #3498db);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: bold;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s;
+        }
+
+        a.button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #9b59b6, #2980b9);
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                padding: 35px 25px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            a.button {
+                font-size: 15px;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Background Particles -->
+    <div class="particles">
+        <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <!-- Main Content with Animation Classes -->
+    <div class="container">
+        <h1 class="fade-in">Welcome to Attendance System</h1>
+        <a href="/professor_signup" class="button fade-in">Professor Signup</a>
+        <a href="/professor_login" class="button fade-in">Professor Login</a>
+        <a href="/student_attendance" class="button fade-in">Student Attendance</a>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attendance Report</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 30px;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            color: #333;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 30px;
+            margin-bottom: 25px;
+            text-shadow: 1px 1px #ccc;
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        form {
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 20px 25px;
+            max-width: 850px;
+            margin: 0 auto 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        label {
+            margin-right: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="date"],
+        select {
+            padding: 10px 14px;
+            font-size: 15px;
+            margin: 8px 10px 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        input[type="date"]:focus,
+        select:focus {
+            border-color: #2196F3;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px 8px;
+            background: linear-gradient(to right, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(to right, #45a049, #4CAF50);
+            transform: scale(1.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 12px 10px;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        th {
+            background: linear-gradient(to right, #2196F3, #21CBF3);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .center-btn {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .center-btn button {
+            background: linear-gradient(to right, #1976D2, #0D47A1);
+        }
+
+        .center-btn button:hover {
+            background: linear-gradient(to right, #0D47A1, #1976D2);
+        }
+
+        .status-label {
+            padding: 6px 12px;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .od-approved {
+            background-color: green;
+        }
+
+        .od-rejected {
+            background-color: red;
+        }
+
+        .present {
+            background-color: #3498db;
+        }
+
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            form, table {
+                width: 100%;
+                overflow-x: auto;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            input, select, button {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>📋 Attendance Report</h2>
+
+    <form method="GET" action="{{ url_for('attendance_report') }}">
+        <label for="date">Date:</label>
+        <input type="date" name="date" value="{{ request.args.get('date', '') }}">
+
+        <label for="department">Department:</label>
+        <select name="department">
+            <option value="">All</option>
+            {% for dept in ['CSE', 'IT', 'ECE', 'MECH', 'MCT', 'AIML', 'AIDS', 'CS', 'EEE', 'MBA'] %}
+                <option value="{{ dept }}" {% if request.args.get('department') == dept %}selected{% endif %}>{{ dept }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="year">Year:</label>
+        <select name="year">
+            <option value="">All</option>
+            {% for yr in ['1st', '2nd', '3rd', '4th'] %}
+                <option value="{{ yr }}" {% if request.args.get('year') == yr %}selected{% endif %}>{{ yr }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">
+            {% if request.args.get('date') or request.args.get('department') or request.args.get('year') %}
+                Apply Filter
+            {% else %}
+                Give Filter
+            {% endif %}
+        </button>
+    </form>
+
+    {% if request.args.get('date') or request.args.get('department') or request.args.get('year') %}
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Register Number</th>
+                <th>Department</th>
+                <th>Year</th>
+                <th>Subject Code</th>
+                <th>Timestamp</th>
+                <th>Status</th>
+            </tr>
+            {% if records %}
+                {% for record in records %}
+                    <tr>
+                        <td>{{ record.name }}</td>
+                        <td>{{ record.reg_no }}</td>
+                        <td>{{ record.department }}</td>
+                        <td>{{ record.year }}</td>
+                        <td>{{ record.subject_code }}</td>
+                        <td>{{ record.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td>
+                            {% if record.od %}
+                                <span class="status-label od-approved">OD Present</span>
+                            {% elif record.status == 'rejected' %}
+                                <span class="status-label od-rejected">OD Rejected</span>
+                            {% else %}
+                                <span class="status-label present">Present</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="7">No attendance records available for the selected filters.</td>
+                </tr>
+            {% endif %}
+        </table>
+
+        {% if records %}
+        <div class="center-btn">
+            <a href="{{ url_for('download_pdf', date=request.args.get('date'), department=request.args.get('department'), year=request.args.get('year')) }}">
+                <button type="button">⬇️ Download PDF</button>
+            </a>
+        </div>
+        {% endif %}
+    {% endif %}
+
+    {% if od_requests %}
+    <h2>Pending OD Requests</h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Register Number</th>
+            <th>Year</th>
+            <th>Department</th>
+            <th>OD Date</th>
+            <th>Event</th>
+            <th>Place</th>
+            <th>Certificate</th>
+            <th>Action</th>
+        </tr>
+        
+        {% for od in od_requests %}
+            <tr>
+                <td>{{ od.name }}</td>
+                <td>{{ od.reg_no }}</td>
+                <td>{{ od.year }}</td>
+                <td>{{ od.department }}</td>
+                <td>{{ od.od_date }}</td>
+                <td>{{ od.event_name }}</td>
+                <td>{{ od.place }}</td>
+                <td>
+                    {% if od.certificate_url %}
+                        <a href="{{ od.certificate_url }}" target="_blank">📄 View</a>
+                    {% else %}
+                        No Certificate
+                    {% endif %}
+                </td>
+                <td>
+                    <form method="POST" action="{{ url_for('approve_od') }}" style="display:inline;">
+                        <input type="hidden" name="od_id" value="{{ od._id }}">
+                        <button type="submit" style="background-color: green; color: white;">Approve</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('reject_od') }}" style="display:inline;">
+                        <input type="hidden" name="od_id" value="{{ od._id }}">
+                        <button type="submit" style="background-color: red; color: white;">Reject</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</body>
+</html>
