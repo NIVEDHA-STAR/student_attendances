@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View OD Requests</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #fc5c7d, #6a82fb);
+            font-family: sans-serif;
+            padding: 30px;
+            color: #fff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255,255,255,0.1);
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        button {
+            padding: 8px 15px;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .approve-btn {
+            background-color: #28a745;
+        }
+        .reject-btn {
+            background-color: #dc3545;
+        }
+        .approve-btn:hover, .reject-btn:hover {
+            opacity: 0.8;
+        }
+        .view-certificate {
+            color: #ffd700;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .view-certificate:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h2>Pending OD Requests</h2>
+
+    {% if flash_message %}
+        <div style="color: #ffd700; text-align: center;">
+            <strong>{{ flash_message }}</strong>
+        </div>
+    {% endif %}
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Reg No</th>
+            <th>OD Date</th>
+            <th>Event</th>
+            <th>Certificate</th>
+            <th>Action</th>
+        </tr>
+        {% for req in od_requests %}
+        <tr>
+            <td>{{ req.name }}</td>
+            <td>{{ req.reg_no }}</td>
+            <td>{{ req.od_date.strftime('%d-%m-%Y') if req.od_date }}</td>
+            <td>{{ req.event_name }}</td>
+            <td>
+                {% if req.certificate_filename %}
+                    <a href="{{ url_for('uploaded_file', filename=req.certificate_filename) }}" class="view-certificate" target="_blank">View Certificate</a>
+                {% else %}
+                    <span style="color: gray;">No Certificate</span>
+                {% endif %}
+            </td>
+            
+            </td>
+            <td>
+                <form action="{{ url_for('approve_od') }}" method="POST" style="display:inline;">
+                    <input type="hidden" name="od_id" value="{{ req._id }}">
+                    <button type="submit" class="approve-btn" onclick="return confirm('Are you sure you want to approve this OD request?')">Approve</button>
+                </form>
+                <form action="{{ url_for('reject_od') }}" method="POST" style="display:inline;">
+                    <input type="hidden" name="od_id" value="{{ req._id }}">
+                    <button type="submit" class="reject-btn" onclick="return confirm('Are you sure you want to reject this OD request?')">Reject</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Professor Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(120deg, #1CB5E0, #000046);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: fadeInBody 1s ease-in-out;
+            overflow: hidden;
+        }
+
+        @keyframes fadeInBody {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 40px 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            text-align: center;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+            animation: fadeInCard 1.2s ease-in-out;
+        }
+
+        @keyframes fadeInCard {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #fff;
+            margin-bottom: 30px;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+        }
+
+        a.button {
+            display: block;
+            width: 100%;
+            padding: 14px 0;
+            margin: 15px 0;
+            background: linear-gradient(135deg, #42e695, #3bb2b8);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 12px rgba(66, 230, 149, 0.3);
+        }
+
+        a.button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(66, 230, 149, 0.5);
+        }
+
+        /* 🎯 Floating Monthly Report Button */
+        .monthly-report-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ff758c, #ff7eb3);
+            color: white;
+            font-size: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(255, 118, 158, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            z-index: 999;
+        }
+
+        .monthly-report-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255, 118, 158, 0.6);
+        }
+
+        .monthly-report-button::after {
+            content: "📅";
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, Professor!</h1>
+        <a href="{{ url_for('generate_pin') }}" class="button">📌 Generate PIN</a>
+        <a href="{{ url_for('attendance_report') }}" class="button">📄 View Attendance Report</a>
+        <a href="{{ url_for('download_pdf') }}" class="button">⬇️ Download PDF</a>
+    </div>
+
+    <!-- 📅 Floating Monthly Report Button -->
+    <a href="{{ url_for('monthly_report') }}" class="monthly-report-button" title="Monthly Report"></a>
+</body>
+</html>
