@@ -33,7 +33,8 @@ pdf_path = (
     else os.path.join(os.getcwd(), 'bin', 'wkhtmltopdf')
 )
 
-config = pdfkit.configuration(wkhtmltopdf=pdf_path)
+config = pdfkit.configuration(wkhtmltopdf='./bin/wkhtmltopdf')
+
 
 # Flask-Mail configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
