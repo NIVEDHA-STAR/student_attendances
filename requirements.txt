@@ -48,7 +48,6 @@ gunicorn==21.2.0
 weasyprint
 flask
 flask-pymongo
-bson
 pdfkit
 weasyprint
 flask-mail
