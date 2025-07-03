@@ -27,14 +27,13 @@ app.config['MONGO_URI'] = (
 mongo = PyMongo(app)
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads', 'certificates')
 
-import platform
+pdf_path = (
+    r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+    if platform.system() == "Windows"
+    else os.path.join(os.getcwd(), 'bin', 'wkhtmltopdf')
+)
 
-if platform.system() == "Windows":
-    pdf_path = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
-else:
-    pdf_path = os.path.join(os.getcwd(), 'bin', 'wkhtmltopdf')
-
-config = pdfkit.configuration(wkhtmltopdf=pdf_path)
+config = pdfkit.configuration(wkhtmltopdf='./bin/wkhtmltopdf')
 
 
 # Flask-Mail configuration
@@ -359,18 +358,16 @@ def uploaded_file(filename):
 def monthly_report():
     data = []
     department = year = month_str = None
-    
+
     if request.method == 'POST':
         department = request.form['department']
         year = request.form['year']
-        month_str = request.form['month']  # Format: YYYY-MM
+        month_str = request.form['month']
 
-        # Parse the selected month
         year_val, month_val = map(int, month_str.split('-'))
         start_date = datetime(year_val, month_val, 1)
         end_date = datetime(year_val, month_val, calendar.monthrange(year_val, month_val)[1], 23, 59, 59)
 
-        # MongoDB aggregation pipeline
         pipeline = [
             {"$match": {
                 "department": department,
@@ -401,13 +398,13 @@ def monthly_report():
         result = list(mongo.db.attendance.aggregate(pipeline))
         data = result
 
-        # If user clicked the Download PDF button
         if request.form.get('download') == 'pdf':
             rendered = render_template('monthly_report.html', data=data, department=department, year=year, month=month_str)
-            pdf = pdfkit.from_string(rendered, False, configuration=config)
+            pdf = HTML(string=rendered).write_pdf()
             return send_file(BytesIO(pdf), download_name='monthly_report.pdf', as_attachment=True)
 
     return render_template('monthly_report.html', data=data, department=department, year=year, month=month_str)
+
 @app.route('/attendance_report', methods=['GET', 'POST'])
 def attendance_report():
     if 'professor' not in session:
@@ -492,22 +489,18 @@ def attendance_report():
 
 
 
-
 @app.route('/download_pdf')
 def download_pdf():
-    # Check if the professor is logged in
     if 'professor' not in session:
         return redirect(url_for('professor_login'))
 
     professor_email = session['professor']
     query = {'professor_email': professor_email}
 
-    # Get filters from URL parameters
     selected_date = request.args.get('date')
     selected_department = request.args.get('department')
     selected_year = request.args.get('year')
 
-    # Date filtering
     if selected_date:
         try:
             date_obj = datetime.strptime(selected_date, "%Y-%m-%d")
@@ -518,33 +511,23 @@ def download_pdf():
             flash("Invalid date format. Please use YYYY-MM-DD.")
             return redirect(url_for('attendance_report'))
 
-    # Department and Year filtering
     if selected_department:
         query['department'] = selected_department
     if selected_year:
         query['year'] = str(selected_year)
 
-    # Fetch records based on filters
     records = list(mongo.db.attendance.find(query))
-
-    # Render HTML to be converted to PDF
     rendered = render_template('professor_pdf.html', records=records, professor_email=professor_email)
-
-    # Configure PDFKit with proper options (if any)
-    pdf_data = pdfkit.from_string(rendered, False, configuration=config)
-
-    # Return PDF as downloadable file
+    pdf_data = HTML(string=rendered).write_pdf()
     return send_file(BytesIO(pdf_data), download_name='attendance_report.pdf', as_attachment=True, mimetype='application/pdf')
+
 
 @app.route('/download_monthly_report', methods=['POST'])
 def download_monthly_report():
-    # Get form values
     department = request.form['department']
     year = request.form['year']
     month = request.form['month']
-
-    # Query & prepare your student-wise data
-    data = ...  # Your logic to get attendance percent list
+    data = []  # You need to fetch or calculate this data
     current_date = datetime.now().strftime("%Y-%m-%d")
 
     rendered = render_template('monthly_report_pdf.html', 
@@ -553,32 +536,11 @@ def download_monthly_report():
                                month=month,
                                data=data,
                                current_date=current_date)
-    
-    pdf = pdfkit.from_string(rendered, False)
+    pdf = HTML(string=rendered).write_pdf()
     response = make_response(pdf)
     response.headers['Content-Type'] = 'application/pdf'
     response.headers['Content-Disposition'] = f'attachment; filename=Monthly_Report_{month}.pdf'
     return response
-def generate_report():
-    attendance_data = Attendance.objects()
-    # Include OD status in the report
-    report_data = []
-    for entry in attendance_data:
-        if entry.is_od:
-            # Add OD event details
-            od_details = ODRequest.objects(student_name=entry.student_name, event_date=entry.date, status='approved').first()
-            entry.od_details = od_details.event_name  # Attach event name if it's an OD
-        report_data.append(entry)
-    return render_template('attendance_report.html', report_data=report_data)
-
-
-def send_report_email(email, records):
-    subject = "Attendance Report"
-    body = "Attached is the attendance report.\n\n"
-    for r in records:
-        body += f"{r['reg_no']} - {r['name']} - {r['department']} - {r.get('year', '')}\n"
-    msg = Message(subject, recipients=[email], body=body)
-    mail.send(msg)
 
 if __name__ == '__main__':
     app.run(debug=True)
