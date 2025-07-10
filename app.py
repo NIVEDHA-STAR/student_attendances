@@ -12,9 +12,12 @@ import certifi
 from io import BytesIO
 from flask_mail import Mail, Message
 from flask import send_from_directory, current_app
+from weasyprint import HTML
 
 
 
+
+    
 app = Flask(__name__)
 
 app.secret_key = 'your_secret_key'
@@ -27,13 +30,7 @@ app.config['MONGO_URI'] = (
 mongo = PyMongo(app)
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads', 'certificates')
 
-pdf_path = (
-    r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
-    if platform.system() == "Windows"
-    else os.path.join(os.getcwd(), 'bin', 'wkhtmltopdf')
-)
 
-config = pdfkit.configuration(wkhtmltopdf='./bin/wkhtmltopdf')
 
 
 # Flask-Mail configuration
@@ -398,12 +395,10 @@ def monthly_report():
         result = list(mongo.db.attendance.aggregate(pipeline))
         data = result
 
-        if request.form.get('download') == 'pdf':
-            rendered = render_template('monthly_report.html', data=data, department=department, year=year, month=month_str)
-            pdf = HTML(string=rendered).write_pdf()
-            return send_file(BytesIO(pdf), download_name='monthly_report.pdf', as_attachment=True)
 
+    # This should always be the final return (not indented under the POST block)
     return render_template('monthly_report.html', data=data, department=department, year=year, month=month_str)
+
 
 @app.route('/attendance_report', methods=['GET', 'POST'])
 def attendance_report():
@@ -536,7 +531,7 @@ def download_monthly_report():
                                month=month,
                                data=data,
                                current_date=current_date)
-    pdf = HTML(string=rendered).write_pdf()
+   pdf = HTML(string=rendered_html).write_pdf()
     response = make_response(pdf)
     response.headers['Content-Type'] = 'application/pdf'
     response.headers['Content-Disposition'] = f'attachment; filename=Monthly_Report_{month}.pdf'
