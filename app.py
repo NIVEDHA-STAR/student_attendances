@@ -18,7 +18,7 @@ from weasyprint import HTML
 
 
     
-aapp = Flask(__name__)
+app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "fallback-secret")
 
 # MongoDB Atlas connection
