@@ -15,6 +15,8 @@ from flask import send_from_directory, current_app
 from weasyprint import HTML
 from flask import Flask
 from flask_pymongo import PyMongo
+from flask import make_response
+
 import certifi
 import os
 
@@ -59,6 +61,14 @@ def professor_signup():
         mongo.db.professors.insert_one({'name': name, 'email': email, 'password': password})
         return redirect(url_for('professor_login'))
     return render_template('signup.html')
+@app.route('/check_mongo_uri')
+def check_mongo_uri():
+    uri = app.config.get("MONGO_URI")
+    if uri:
+        return "Mongo URI is set"
+    else:
+        return "Mongo URI is NOT set"
+
 
 @app.route('/professor_login', methods=['GET', 'POST'])
 def professor_login():
