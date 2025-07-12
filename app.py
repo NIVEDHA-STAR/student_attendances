@@ -20,7 +20,8 @@ import certifi
 import os
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
+app.config["MONGO_URI"] = "mongodb+srv://muthunivedha135:nive123@cluster0.er3xhxj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+
 
 mongo = PyMongo(app, tlsCAFile=certifi.where())
 
