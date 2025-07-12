@@ -16,17 +16,14 @@ from weasyprint import HTML
 
 
 
-
-    
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "fallback-secret")
 
-# MongoDB Atlas connection
-
-app.config["MONGO_URI"] = os.environ.get("mongodb+srv://muthunivedha135:nive123@cluster0.er3xhxj.mongodb.net/attendanceDB"
-    "?retryWrites=true&w=majority", "your-fallback-uri")
+# Correct MongoDB Atlas connection using environment variable name
+app.config["MONGO_URI"] = os.environ.get("MONGO_URI", "your-fallback-uri")
 
 mongo = PyMongo(app, tls=True, tlsCAFile=certifi.where())
+
 
 
 
