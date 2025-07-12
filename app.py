@@ -61,13 +61,10 @@ def professor_signup():
         mongo.db.professors.insert_one({'name': name, 'email': email, 'password': password})
         return redirect(url_for('professor_login'))
     return render_template('signup.html')
-@app.route('/check_mongo_uri')
-def check_mongo_uri():
-    uri = app.config.get("MONGO_URI")
-    if uri:
-        return "Mongo URI is set"
-    else:
-        return "Mongo URI is NOT set"
+
+@app.route('/check_mongo')
+def check_mongo():
+    return f"MONGO_URI: {app.config.get('MONGO_URI')}"
 
 
 @app.route('/professor_login', methods=['GET', 'POST'])
