@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: student_attendances
+    env: python
+    buildCommand: |
+      apt-get update && \
+      apt-get install -y wkhtmltopdf && \
+      pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: FLASK_ENV
+        value: production
