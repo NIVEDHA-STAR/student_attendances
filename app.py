@@ -12,7 +12,6 @@ import certifi
 from io import BytesIO
 from flask_mail import Mail, Message
 from flask import send_from_directory, current_app
-from weasyprint import HTML
 from flask import Flask
 from flask_pymongo import PyMongo
 from flask import make_response
@@ -513,8 +512,12 @@ def download_pdf():
 
     records = list(mongo.db.attendance.find(query))
     rendered = render_template('professor_pdf.html', records=records, professor_email=professor_email)
-    pdf_data = HTML(string=rendered).write_pdf()
-    return send_file(BytesIO(pdf_data), download_name='attendance_report.pdf', as_attachment=True, mimetype='application/pdf')
+
+    # Create PDF with pdfkit
+    pdf = pdfkit.from_string(rendered, False)
+
+    return send_file(BytesIO(pdf), download_name='attendance_report.pdf', as_attachment=True, mimetype='application/pdf')
+
 
 
 @app.route('/download_monthly_report', methods=['POST'])
@@ -531,13 +534,13 @@ def download_monthly_report():
                                     month=month,
                                     data=data,
                                     current_date=current_date)
-    
-    pdf = HTML(string=rendered_html).write_pdf()
+
+    pdf = pdfkit.from_string(rendered_html, False)
+
     response = make_response(pdf)
     response.headers['Content-Type'] = 'application/pdf'
     response.headers['Content-Disposition'] = f'attachment; filename=Monthly_Report_{month}.pdf'
     return response
-
 
 if __name__ == '__main__':
     app.run(debug=True)
