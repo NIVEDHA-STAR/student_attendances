@@ -23,15 +23,14 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
 # MongoDB Atlas connection
+import certifi
 
-
-app.config['MONGO_URI'] = (
-    'mongodb+srv://muthunivedha135:nive123@cluster0.er3xhxj.mongodb.net/attendanceDB'
-    '?retryWrites=true&w=majority&tls=true'
+app.config["MONGO_URI"] = (
+    "mongodb+srv://muthunivedha135:nive123@cluster0.er3xhxj.mongodb.net/attendanceDB"
+    "?retryWrites=true&w=majority"
 )
 
-mongo = PyMongo(app, tlsCAFile=certifi.where())
-
+mongo = PyMongo(app, tls=True, tlsCAFile=certifi.where())
 
 
 
