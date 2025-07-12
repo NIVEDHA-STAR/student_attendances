@@ -525,17 +525,19 @@ def download_monthly_report():
     data = []  # You need to fetch or calculate this data
     current_date = datetime.now().strftime("%Y-%m-%d")
 
-    rendered = render_template('monthly_report_pdf.html', 
-                               department=department,
-                               year=year,
-                               month=month,
-                               data=data,
-                               current_date=current_date)
-   pdf = HTML(string=rendered_html).write_pdf()
+    rendered_html = render_template('monthly_report_pdf.html', 
+                                    department=department,
+                                    year=year,
+                                    month=month,
+                                    data=data,
+                                    current_date=current_date)
+    
+    pdf = HTML(string=rendered_html).write_pdf()
     response = make_response(pdf)
     response.headers['Content-Type'] = 'application/pdf'
     response.headers['Content-Disposition'] = f'attachment; filename=Monthly_Report_{month}.pdf'
     return response
+
 
 if __name__ == '__main__':
     app.run(debug=True)
