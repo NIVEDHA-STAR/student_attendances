@@ -15,14 +15,14 @@ from flask import send_from_directory, current_app
 from weasyprint import HTML
 
 
-
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "fallback-secret")
 
-# Correct MongoDB Atlas connection using environment variable name
+# ✅ Load from environment
 app.config["MONGO_URI"] = os.environ.get("MONGO_URI", "your-fallback-uri")
 
-mongo = PyMongo(app, tls=True, tlsCAFile=certifi.where())
+# ✅ No need to pass tls again here, already included in URI
+mongo = PyMongo(app, tlsCAFile=certifi.where())
 
 
 
