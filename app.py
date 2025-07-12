@@ -22,10 +22,11 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "fallback-secret")
 
 # MongoDB Atlas connection
-app.config["MONGO_URI"] = os.environ.get("mongodb+srv://muthunivedha135:nive123@cluster0.er3xhxj.mongodb.net/attendanceDB"
-    "?retryWrites=true&w=majority")
-mongo = PyMongo(app, tls=True, tlsCAFile=certifi.where())
 
+app.config["MONGO_URI"] = os.environ.get("mongodb+srv://muthunivedha135:nive123@cluster0.er3xhxj.mongodb.net/attendanceDB"
+    "?retryWrites=true&w=majority", "your-fallback-uri")
+
+mongo = PyMongo(app, tls=True, tlsCAFile=certifi.where())
 
 
 
