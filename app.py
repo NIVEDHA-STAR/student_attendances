@@ -1,30 +1,30 @@
 from flask import Flask, render_template, request, redirect, url_for, session, send_file, flash, send_from_directory
 from flask_pymongo import PyMongo
-from bson.objectid import ObjectId
 from datetime import datetime, timedelta
-import random
-import pdfkit
-import calendar
-import os
-from werkzeug.utils import secure_filename
-import platform
-import certifi
+import random, pdfkit, calendar, os, certifi
 from io import BytesIO
+from bson.objectid import ObjectId
+from werkzeug.utils import secure_filename
 from flask_mail import Mail, Message
-from flask import send_from_directory, current_app
-from flask import Flask
-from flask_pymongo import PyMongo
 from flask import make_response
 
-import certifi
-import os
-
+# ✅ Step 1: Initialize the app
 app = Flask(__name__)
-app.config["MONGO_URI"] = "mongodb+srv://muthunivedha135:nive123@cluster0.er3xhxj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+
+# ✅ Step 2: Set secret key (AFTER creating the app)
+app.secret_key = 'your_secret_key_here'  # Replace with a secure key
+
+# ✅ Step 3: MongoDB configuration
+app.config["MONGO_URI"] = "mongodb+srv://muthunivedha135:123nive@cluster0.er3xhxj.mongodb.net/student_attendance?retryWrites=true&w=majority&appName=Cluster0"
 
 
+# ✅ Step 4: Initialize Mongo and Mail
 mongo = PyMongo(app, tlsCAFile=certifi.where())
+mail = Mail(app)
 
+
+
+print("✅ Mongo Connected:", mongo.db)
 
 
 
