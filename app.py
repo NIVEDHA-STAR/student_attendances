@@ -23,12 +23,14 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
 # MongoDB Atlas connection
+
+
 app.config['MONGO_URI'] = (
     'mongodb+srv://muthunivedha135:nive123@cluster0.er3xhxj.mongodb.net/attendanceDB'
-    '?retryWrites=true&w=majority&tls=true&tlsCAFile=' + certifi.where()
+    '?retryWrites=true&w=majority&tls=true'
 )
-mongo = PyMongo(app)
-app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads', 'certificates')
+
+mongo = PyMongo(app, tlsCAFile=certifi.where())
 
 
 
