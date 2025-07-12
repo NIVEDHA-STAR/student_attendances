@@ -13,15 +13,14 @@ from io import BytesIO
 from flask_mail import Mail, Message
 from flask import send_from_directory, current_app
 from weasyprint import HTML
-
+from flask import Flask
+from flask_pymongo import PyMongo
+import certifi
+import os
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "fallback-secret")
+app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 
-# ✅ Load from environment
-app.config["MONGO_URI"] = os.environ.get("MONGO_URI", "your-fallback-uri")
-
-# ✅ No need to pass tls again here, already included in URI
 mongo = PyMongo(app, tlsCAFile=certifi.where())
 
 
