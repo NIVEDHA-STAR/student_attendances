@@ -548,15 +548,7 @@ def download_pdf():
 
     return send_file(BytesIO(pdf), download_name='attendance_report.pdf', as_attachment=True, mimetype='application/pdf')
 
-def is_pin_valid(entered_pin):
-    """Check if a PIN exists and is still valid (5 minutes)."""
-    latest_pin_doc = mongo.db.pins.find().sort('timestamp', -1).limit(1)
-    pin_record = next(latest_pin_doc, None)
-    if pin_record:
-        valid_until = pin_record['timestamp'] + timedelta(minutes=5)
-        if str(pin_record['pin']) == str(entered_pin) and datetime.utcnow() <= valid_until:
-            return True
-    return False
+
 
 @app.route('/download_monthly_report', methods=['POST'])
 def download_monthly_report():
