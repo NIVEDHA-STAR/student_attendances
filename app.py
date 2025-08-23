@@ -483,11 +483,40 @@ def attendance_report():
     )
 
 
-
+    
 @app.route('/download_pdf')
 def download_pdf():
     if 'professor' not in session:
         return redirect(url_for('professor_login'))
+
+    professor_email = session['professor']
+    query = {'professor_email': professor_email}
+
+    selected_date = request.args.get('date')
+    selected_department = request.args.get('department')
+    selected_year = request.args.get('year')
+
+    if selected_date:
+        try:
+            date_obj = datetime.strptime(selected_date, "%Y-%m-%d")
+            start = datetime(date_obj.year, date_obj.month, date_obj.day)
+            end = start + timedelta(days=1)
+            query['timestamp'] = {'$gte': start, '$lt': end}
+        except ValueError:
+            flash("Invalid date format. Please use YYYY-MM-DD.")
+            return redirect(url_for('attendance_report'))
+
+    if selected_department:
+        query['department'] = selected_department
+    if selected_year:
+        query['year'] = str(selected_year)
+
+    records = list(mongo.db.attendance.find(query))
+    rendered = render_template('professor_pdf.html', records=records, professor_email=professor_email)
+
+    pdf = pdfkit.from_string(rendered, False, configuration=pdf_config)
+
+    return send_file(BytesIO(pdf), download_name='attendance_report.pdf', as_attachment=True, mimetype='application/pdf')
 
     professor_email = session['professor']
     query = {'professor_email': professor_email}
