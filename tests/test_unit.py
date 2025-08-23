@@ -13,6 +13,15 @@ def test_pin_expiry():
     old_time = datetime.now() - timedelta(minutes=6)
     assert is_pin_valid(old_time) == False
 
-    # valid PIN
+    # valid PINfrom app import generate_pin, is_pin_valid
+
+def test_generate_pin():
+    pin = generate_pin()
+    assert len(str(pin)) == 4
+
+def test_is_pin_valid():
+    pin = generate_pin()
+    assert is_pin_valid(pin) == True
+
     recent_time = datetime.now() - timedelta(minutes=4)
     assert is_pin_valid(recent_time) == True
