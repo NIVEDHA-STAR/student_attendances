@@ -8,19 +8,24 @@ from werkzeug.utils import secure_filename
 from flask_mail import Mail, Message
 from flask import make_response
 
-# ✅ Step 1: Initialize the app
+#from flask import Flask
+from flask_pymongo import PyMongo
+import certifi
+
 app = Flask(__name__)
+app.secret_key = 'your_secret_key_here'
 
-# ✅ Step 2: Set secret key (AFTER creating the app)
-app.secret_key = 'your_secret_key_here'  # Replace with a secure key
+# MongoDB Atlas connection string (replace username/password)
+MONGO_URI = "mongodb+srv://muthunivedha135:123nive@cluster0.er3xhxj.mongodb.net/student_attendance?retryWrites=true&w=majority"
 
-# ✅ Step 3: MongoDB configuration
-app.config["MONGO_URI"] = "mongodb+srv://muthunivedha135:123nive@cluster0.er3xhxj.mongodb.net/student_attendance?retryWrites=true&w=majority&appName=Cluster0"
+# Correct PyMongo connection for TLS on Windows
+mongo = PyMongo(app,
+                uri=MONGO_URI,
+                tls=True,                 # Force TLS
+                tlsAllowInvalidCertificates=False,
+                tlsCAFile=certifi.where()  # Use CA bundle from certifi
+                )
 
-
-# ✅ Step 4: Initialize Mongo and Mail
-mongo = PyMongo(app, tlsCAFile=certifi.where())
-mail = Mail(app)
 
 
 
