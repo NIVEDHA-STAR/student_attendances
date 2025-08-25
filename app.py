@@ -7,22 +7,25 @@ from bson.objectid import ObjectId
 from werkzeug.utils import secure_filename
 from flask_mail import Mail, Message
 from flask import make_response
-
-#from flask import Flask
+from flask import Flask
 from flask_pymongo import PyMongo
 import certifi
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 
-# MongoDB Atlas connection string (replace username/password
+# MongoDB Atlas URI
+MONGO_URI = "mongodb+srv://muthunivedha135:123nive@cluster0.er3xhxj.mongodb.net/student_attendance?retryWrites=true&w=majority"
 
-uri = "mongodb+srv://muthunivedha135:123nive@cluster0.er3xhxj.mongodb.net/student_attendance?retryWrites=true&w=majority"
-client = MongoClient(uri, tlsCAFile=certifi.where())
-db = client.get_database()
-print(db.list_collection_names())
+# Proper TLS connection
+mongo = PyMongo(app,
+                uri=MONGO_URI,
+                tls=True,                # Force TLS
+                tlsAllowInvalidCertificates=False,
+                tlsCAFile=certifi.where()  # Certifi CA bundle
+                )
 
-
+mail = Mail(app)
 
 print("✅ Mongo Connected:", mongo.db)
 
@@ -483,7 +486,6 @@ def attendance_report():
     )
 
 
-    
 @app.route('/download_pdf')
 def download_pdf():
     if 'professor' not in session:
@@ -506,45 +508,21 @@ def download_pdf():
             flash("Invalid date format. Please use YYYY-MM-DD.")
             return redirect(url_for('attendance_report'))
 
-    if selected_department:
+    if selected_department and selected_department != 'All':
         query['department'] = selected_department
-    if selected_year:
+    if selected_year and selected_year != 'All':
         query['year'] = str(selected_year)
 
     records = list(mongo.db.attendance.find(query))
+
     rendered = render_template('professor_pdf.html', records=records, professor_email=professor_email)
+
+    # PDFKit configuration for Windows
+    pdf_config = pdfkit.configuration(
+        wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
+    )
 
     pdf = pdfkit.from_string(rendered, False, configuration=pdf_config)
-
-    return send_file(BytesIO(pdf), download_name='attendance_report.pdf', as_attachment=True, mimetype='application/pdf')
-
-    professor_email = session['professor']
-    query = {'professor_email': professor_email}
-
-    selected_date = request.args.get('date')
-    selected_department = request.args.get('department')
-    selected_year = request.args.get('year')
-
-    if selected_date:
-        try:
-            date_obj = datetime.strptime(selected_date, "%Y-%m-%d")
-            start = datetime(date_obj.year, date_obj.month, date_obj.day)
-            end = start + timedelta(days=1)
-            query['timestamp'] = {'$gte': start, '$lt': end}
-        except ValueError:
-            flash("Invalid date format. Please use YYYY-MM-DD.")
-            return redirect(url_for('attendance_report'))
-
-    if selected_department:
-        query['department'] = selected_department
-    if selected_year:
-        query['year'] = str(selected_year)
-
-    records = list(mongo.db.attendance.find(query))
-    rendered = render_template('professor_pdf.html', records=records, professor_email=professor_email)
-
-    # Create PDF with pdfkit
-    pdf = pdfkit.from_string(rendered, False)
 
     return send_file(BytesIO(pdf), download_name='attendance_report.pdf', as_attachment=True, mimetype='application/pdf')
 
