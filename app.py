@@ -15,17 +15,12 @@ import certifi
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 
-# MongoDB Atlas connection string (replace username/password)
-MONGO_URI = "mongodb+srv://muthunivedha135:123nive@cluster0.er3xhxj.mongodb.net/student_attendance?retryWrites=true&w=majority"
+# MongoDB Atlas connection string (replace username/password
 
-# Correct PyMongo connection for TLS on Windows
-mongo = PyMongo(app,
-                uri=MONGO_URI,
-                tls=True,                 # Force TLS
-                tlsAllowInvalidCertificates=False,
-                tlsCAFile=certifi.where()  # Use CA bundle from certifi
-                )
-
+uri = "mongodb+srv://muthunivedha135:123nive@cluster0.er3xhxj.mongodb.net/student_attendance?retryWrites=true&w=majority"
+client = MongoClient(uri, tlsCAFile=certifi.where())
+db = client.get_database()
+print(db.list_collection_names())
 
 
 
